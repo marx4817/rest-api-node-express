@@ -1,0 +1,11 @@
+GET http://localhost:3001/brands
+Content-Type: application/json
+Authorization: Bearer  hh
+
+GET http://localhost:3001/posts/17
+Content-Type: application/json
+Authorization: Bearer  hh
+
+GET http://localhost:3001/posts
+Content-Type: application/json
+Authorization: Bearer  hh
