@@ -1,6 +1,6 @@
 const express = require('express')
 //import allData from './data'
-app = express()
+
 const data = {
     "products":[
             {
@@ -310,41 +310,46 @@ const data = {
 "limit":30
 }
 
-app.get("/posts", (req, res)=>{
+app = express()
+
+const cors = (req, res, next) => {
+    const AllowOrigin = ['http://localhost:9007', 'http://localhost:8000'];
+    const origin = req.headers.origin;
+
+    AllowOrigin.includes(origin) ? res.set('Access-Control-Allow-Origin', origin) : res.sendStatus(401)
+    res.set('Access-Control-Allow-Methods', 'GET');
+    next();
+}
+
+
+const authorization = (req, res, next) => {
     let token1 = req.headers.authorization;
-   
     if(token1 === undefined){
         return res.sendStatus(401);
     }
-    res.set("Access-Control-Allow-Origin", "*");
+    next()
+}
+  
+app.use(cors)
+
+app.get("/posts", authorization, (req, res)=>{
     res.send(data.products, 200);
 });
 
-app.get("/posts/:id", (req, res)=>{
-    let token1 = req.headers.authorization;
-    if(token1 === undefined){
-        return res.sendStatus(401);
-    }
-
+app.get("/posts/:id", authorization, (req, res)=>{
     let  {id} = req.params;
     id = parseInt(id);
-    const product = data.products.filter((el)=> el.id === id);
     
-    res.set("Access-Control-Allow-Origin", "*");
+    const product = data.products.filter((el)=> el.id === id);
     res.send(product, 200);
 });
 
-app.get("/brands", (req, res)=>{
-    let token1 = req.headers.authorization;
-   
-    if(token1 === undefined){
-        return res.sendStatus(401);
-    }
+app.get("/brands", authorization, (req, res)=>{
     const brands = []
     data.products.map(el => 
         !brands.includes(el.brand) ? brands.push(el.brand) :""
     )
-    res.set("Access-Control-Allow-Origin", "*");
+    
     res.send(brands, 200);
 });
 
